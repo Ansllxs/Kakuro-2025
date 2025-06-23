@@ -287,10 +287,93 @@ def borrar_juego(boton_iniciar, etiqueta_nivel, entrada_nombre):
         etiqueta_nivel.config(text="NIVEL " + nivel_seleccionado.upper())
         entrada_nombre.delete(0, tk.END)
 
+
+def terminarJuego(ventanaJuego):
+    global juego_activo
+    if not juego_activo:
+        messagebox.showerror("Error", "NO SE HA INICIADO EL JUEGO")
+        return
+            
+    respuesta = messagebox.askyesno("Confirmar", "¿ESTÁ SEGURO DE TERMINAR EL JUEGO?")
+    
+    if respuesta:
+        juego_activo = False
+        ventanaJuego.destroy()  # Cierra la ventana del juego actual
+        jugar() #empieza la pantallaa  de jugar para empezar otro juego
+    else:
+        pass
+
 def reiniciar_juego():
     global numero_seleccionado
     numero_seleccionado = None
     pintar_tablero_completo()
+
+def guardar_juego(nombreJugador, ventana):
+    global juego_activo
+
+    if not juego_activo:
+        messagebox.showerror("Error", "NO SE HA INICIADO EL JUEGO")
+        return
+
+    # Guardar el estado actual del tablero
+    tablero = []
+    for fila in range(9):
+        fila_actual = []
+        for col in range(9):
+            texto = celdas[fila][col]["text"]
+            fila_actual.append(texto)
+        tablero.append(fila_actual)
+
+    # Armar datos del juego
+    datos = {
+        "nivel": nivel_seleccionado,
+        "tablero": tablero,
+        "jugadas": pila_deshacer
+    }
+
+    archivo = open("kakuro2025_juego_actual.json", "r")
+    partidas = json.load(archivo)
+    archivo.close()
+
+    partidas[nombreJugador] = datos
+
+    archivo = open("kakuro2025_juego_actual.json", "w")
+    json.dump(partidas, archivo, indent=4)
+    archivo.close()
+
+    messagebox.showinfo("Guardado", "El juego se guardó correctamente.")
+
+    respuesta = messagebox.askyesno("Continuar", "¿VA A CONTINUAR JUGANDO?")
+    if not respuesta:
+        juego_activo = False
+        ventana.destroy()
+
+def cargar_juego(nombreJugador):
+    global juego_activo, nivel_seleccionado, pila_deshacer
+
+    if juego_activo:
+        messagebox.showerror("Error", "YA HAY UN JUEGO ACTIVO")
+        return
+
+    archivo = open("kakuro2025_juego_actual.json", "r")
+    partidas = json.load(archivo)
+    archivo.close()
+
+    if nombreJugador not in partidas:
+        messagebox.showerror("Error", "NO HAY PARTIDA GUARDADA PARA ESTE JUGADOR")
+        return
+
+    datos = partidas[nombreJugador]
+    tablero = datos["tablero"]
+    nivel_seleccionado = datos["nivel"]
+    pila_deshacer = datos["jugadas"]
+
+    for fila in range(9):
+        for col in range(9):
+            texto = tablero[fila][col]
+            celdas[fila][col].config(text=texto)
+
+    messagebox.showinfo("Cargado", "La partida fue cargada correctamente.\nPresione INICIAR JUEGO para continuar.")
 
 
 def jugar():
@@ -340,7 +423,7 @@ def jugar():
     for num in range(1, 10):
         boton = tk.Button(numeros, text=str(num), width=2, height=1, command=lambda n=num: seleccionar_numero(n))
         boton.pack(pady=1)
-        # Botón borrador para activar modo borrar
+
     boton_borrador = tk.Button(numeros, text="🧽", font=("Arial", 14), width=3, command=activar_borrador)
     boton_borrador.pack(pady=8)
 
@@ -387,7 +470,7 @@ def jugar():
     boton_borrar = tk.Button(botones_abajo, text="BORRAR JUEGO", bg="pink2", width=19, height=2, command=lambda: borrar_juego(boton_iniciar, etiqueta_nivel, entrada))
     boton_borrar.grid(row=0, column=2, padx=6, pady=4)
 
-    boton_guardar = tk.Button(botones_abajo, text="GUARDAR JUEGO", bg="Thistle2", width=19, height=2)
+    boton_guardar = tk.Button(botones_abajo, text="GUARDAR JUEGO", bg="Thistle2", width=19, height=2, command=lambda: guardar_juego(nombre_jugador, ventana))
     boton_guardar.grid(row=0, column=3, padx=6, pady=4)
 
     boton_records = tk.Button(botones_abajo, text="RÉCORDS", bg="antiquewhite1", width=19, height=2, command=mostrar_records)
@@ -396,10 +479,10 @@ def jugar():
     boton_rehacer = tk.Button(botones_abajo, text="REHACER JUGADA", bg="orchid2", width=19, height=2, command=rehacer_jugada)
     boton_rehacer.grid(row=1, column=1, padx=6, pady=4)
 
-    boton_terminar = tk.Button(botones_abajo, text="TERMINAR JUEGO", bg="lightcoral", width=19, height=2)
+    boton_terminar = tk.Button(botones_abajo, text="TERMINAR JUEGO", bg="lightcoral", width=19, height=2, command=lambda: terminarJuego(ventana))
     boton_terminar.grid(row=1, column=2, padx=6, pady=4)
 
-    boton_cargar = tk.Button(botones_abajo, text="CARGAR JUEGO", bg="rosybrown", width=19, height=2)
+    boton_cargar = tk.Button(botones_abajo, text="CARGAR JUEGO", bg="rosybrown", width=19, height=2,command=lambda: cargar_juego(nombre_jugador))
     boton_cargar.grid(row=1, column=3, padx=6, pady=4)
 
 
