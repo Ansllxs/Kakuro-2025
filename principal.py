@@ -493,7 +493,16 @@ def ayuda():
     messagebox.showinfo("Ayuda")
 
 def acerca_de():
-    messagebox.showinfo("Acerca de")
+    mensaje = (
+        "Nombre del programa : Kakuro 2025\n"
+        "Versión             : 1.0\n"
+        "Fecha               : 26 de junio del 2025\n"
+        "Autora              : Angie Mariela Alpizar Porras\n"
+        "Carné               : 2025079783\n"
+        "Curso               : Taller de Programación\n"
+        "Institución         : Instituto Tecnológico de Costa Rica"
+    )
+    messagebox.showinfo("Acerca del sistema", mensaje)
 
 def salir():
     ventana_principal.destroy()
