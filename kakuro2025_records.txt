@@ -8,5 +8,30 @@
         "jugador": "angie",
         "nivel": "F\u00c1CIL",
         "tiempo": "00:00:30"
+    },
+    {
+        "jugador": "ans",
+        "nivel": "FACIL",
+        "tiempo": "00:00:00"
+    },
+    {
+        "jugador": "ans",
+        "nivel": "FACIL",
+        "tiempo": "00:00:00"
+    },
+    {
+        "jugador": "ans",
+        "nivel": "FACIL",
+        "tiempo": "00:00:35"
+    },
+    {
+        "jugador": "ans",
+        "nivel": "FACIL",
+        "tiempo": "00:00:00"
+    },
+    {
+        "jugador": "ans",
+        "nivel": "FACIL",
+        "tiempo": "00:00:56"
     }
 ]
